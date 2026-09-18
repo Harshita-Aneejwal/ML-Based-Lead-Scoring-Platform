@@ -1,103 +1,279 @@
-# Lead_Scoring_Case_Study
+# ML-Based-Lead-Scoring-Platform
 
 ## Topics Covered
 
 * Overview
 * Motivation
 * Setup
-* Technical Aspect
+* Technical Aspects
 * Demo
 
+---
 
 ## Overview
 
-The objective of this project is to predict whether a customer/ lead will purchase the product or not. In this project the focus is mostly on the process of creating pipelines for data pre-processing, model training and inference using **Airflow**. The project also covers model experiment tracking using **MLFlow**. Pycaret module which is an opensource framework for auto ML is used to find the best fit model. During pycaret experimentation it is found that lightgbm, which is an xgboost classfication algorithm gives the best performance.The model was evaluated based on accuracy.The project also covers unit test cases using pytest. 
+The objective of this project is to predict whether a customer lead is likely to purchase a product or service. The project demonstrates an end-to-end MLOps workflow for lead scoring, including data preprocessing, model training, experiment tracking, and inference automation using **Apache Airflow** and **MLflow**.
+
+**PyCaret**, an open-source AutoML framework, is used for model experimentation and selection. During experimentation, **LightGBM** achieved the best performance for lead conversion prediction. The project also includes unit testing using **PyTest** to ensure the reliability of preprocessing components and data transformation pipelines.
+
+---
 
 ## Motivation
 
-The project is a case study on an ed-tech startup which is finding ways to utilize it's marketing spends efficiently. The company has spent extensively on aquiring customers /leads and is now looking to reduce the CAC(customer acquisition cost). High CAC could be due to the following reasons:
+This project is based on a case study involving an EdTech startup seeking to optimize its marketing expenditure and reduce Customer Acquisition Cost (CAC).
 
-1. Incorrect targeting.
-2. High Competition.
-3. Inefficient conversion
+High CAC can result from:
 
-The business metric addressed here is Leads to Application Completion which resolves the third issue.
-A lead is generated when any person visits the website and enters their contact details on the platform. A junk lead is generated when a person who shares their contact details has no interest in the product/service. Having junk leads in the pipeline creates significant inefficiency in the sales process. Thus, the goal of the project is to build a system that categorises leads based on the likelihood of their purchasing the course. This system will help remove the inefficiency caused by junk leads in the sales process.
+1. Incorrect targeting
+2. High competition
+3. Inefficient conversion processes
 
-## Techincal Aspect
+This project focuses on improving the **Lead-to-Application Completion** metric by identifying high-quality leads that are more likely to convert.
 
-### Pipelines
+A lead is generated when a visitor shares their contact information on the platform. However, not all leads are genuinely interested in the offered service. These low-intent or junk leads create inefficiencies in the sales pipeline and consume valuable resources.
 
-1. Data Pipeline: processes the raw data 
-2. Training pipeline : preprocessing & model training
-3. Inference pipeline: pre-processing , model prediction 
-### Pre-processing & EDA
-The dataset primarity focuses on the variables/features describing the origin of the lead(e.g: referred_leads,city_mapped) and the interaction of the lead with the website(1_on_1_mentorship, whatsapp_chat_click). The Exploratory Data Analysis was done using pandas profiling.
-#### EDA Observations
-* The dataset consists a lot of missing values
-* There are only a few categories which are significant in first_platform_c, first_utm_source_c,first_utm_medium_c.
-* There are few interaction columns which have 99% missing values 
-#### Data Pre-processing
-* Reducing the high cardinality in city_mapping column: the city is mapped to tier1 , tier2 and tier 3.
-* The first_platform_c, first_utm_medium_c and first_utm_source_c columns contained only a few significant categories. To sort this problem, we can pick up the categories that covered 90% of the data. The smaller contributing categories can be classified as ‘others’. To do this, we must calculate the cumulative frequency of each category to filter them out on 90% criteria. 
-* Replaced the null values with 0 for total_leads_dropped and referred_leads column.
-* There are 37 interaction columns which have to be classified into four categories namely assistance interaction, career interaction, payment interaction and syllabus interaction. 
+The goal of this platform is to classify leads based on their likelihood of conversion, enabling sales teams to prioritize promising prospects and improve operational efficiency.
 
-The notebook for data preprocessing and EDA can be found here [Data Preprocessing&EDA](https://github.com/RakshithaBS/Lead_Scoring_Case_Study/blob/master/Lead_scoring_data_pipeline/data_cleaning_template.ipynb)
+---
+
+## Technical Aspects
+
+### Project Pipelines
+
+The platform consists of three major pipelines:
+
+#### 1. Data Pipeline
+
+Processes and transforms raw lead data into a structured format suitable for machine learning.
+
+#### 2. Training Pipeline
+
+Performs preprocessing, feature engineering, model training, and model registration.
+
+#### 3. Inference Pipeline
+
+Applies preprocessing and generates predictions for new incoming leads.
+
+---
+
+### Exploratory Data Analysis (EDA) & Preprocessing
+
+The dataset primarily contains features describing:
+
+* Lead acquisition sources
+* Marketing channels
+* Website interaction behavior
+* User engagement metrics
+
+EDA was performed using **Pandas Profiling**.
+
+#### Key EDA Observations
+
+* Large number of missing values across several features
+* Only a few categories contribute significantly to:
+
+  * `first_platform_c`
+  * `first_utm_source_c`
+  * `first_utm_medium_c`
+* Several interaction features contain more than 99% missing values
+
+#### Data Preprocessing Steps
+
+* Reduced high cardinality in the `city_mapped` feature by grouping cities into Tier-1, Tier-2, and Tier-3 categories.
+* Consolidated low-frequency categories in marketing source features into an `Others` category using cumulative frequency thresholds.
+* Replaced null values in:
+
+  * `total_leads_dropped`
+  * `referred_leads`
+* Categorized 37 interaction-related features into:
+
+  * Assistance Interaction
+  * Career Interaction
+  * Payment Interaction
+  * Syllabus Interaction
+
+Data preprocessing notebook:
+
+https://github.com/Harshita-Aneejwal/ML-Based-Lead-Scoring-Platform/blob/master/Lead_scoring_data_pipeline/data_cleaning_template.ipynb
+
+---
 
 ### Model Experimentation
 
-Pycaret is an open-source, low-code machine learning library in Python that is designed to simplify the machine learning process. It allows users to perform several common machine learning tasks, such as data pre-processing, feature engineering, model selection, hyperparameter tuning, and model deployment, with minimal coding.. Based on the initial experiment results, it was found that there were a few irrelevant features. The second run of the experiment was done after removing the irrelevant features. Pycaret internally logs the model too mllflow registry based on the parameters passed in setup function. The model experimentation notebook can be found here [Model experimentation](https://github.com/RakshithaBS/Lead_Scoring_Case_Study/blob/master/notebooks/lead_scoring_model_experimentation.ipynb).
+**PyCaret** was used to automate model experimentation, evaluation, and comparison.
 
-### Test Cases
+The experimentation process included:
 
-The project covers basic unit test cases to check the pre-processing functionalities.
+* Automated preprocessing
+* Feature selection
+* Model comparison
+* Hyperparameter optimization
+* MLflow experiment tracking
 
-1. Check load_data_to_db function.
-2. Check mapping city to tiers functionality
-3. Test case to check the correct mapping of categorical variables.
-4. Test case to check interaction mapping schema
+After removing irrelevant features identified during initial experiments, model performance improved significantly.
 
-Test cases can be found here [Test cases](https://github.com/RakshithaBS/Lead_Scoring_Case_Study/tree/master/unit_test)
+The best-performing model was **LightGBM**, which was selected based on prediction accuracy.
 
+Model experimentation notebook:
 
+https://github.com/Harshita-Aneejwal/ML-Based-Lead-Scoring-Platform/blob/master/notebooks/lead_scoring_model_experimentation.ipynb
+
+---
+
+### Experiment Tracking with MLflow
+
+MLflow is used to:
+
+* Track experiments
+* Compare model runs
+* Store model artifacts
+* Register trained models
+* Maintain reproducibility
+
+PyCaret automatically logs experiments to MLflow using the configured tracking server.
+
+---
+
+### Unit Testing
+
+The project includes PyTest-based unit tests covering key preprocessing functionalities:
+
+1. Testing data loading operations
+2. Verifying city-tier mapping logic
+3. Validating categorical feature mappings
+4. Testing interaction category mappings
+
+Test cases:
+
+https://github.com/Harshita-Aneejwal/ML-Based-Lead-Scoring-Platform/tree/master/unit_test
+
+---
+
+## Technology Stack
+
+* Python
+* Apache Airflow
+* MLflow
+* PyCaret
+* LightGBM
+* Pandas
+* NumPy
+* Scikit-learn
+* PyTest
+* SQLite
+* Jupyter Notebook
+
+---
 
 ## Setup
 
-1. Install necessary dependencies using the below command.
+### 1. Clone the Repository
 
+```bash
+git clone https://github.com/Harshita-Aneejwal/ML-Based-Lead-Scoring-Platform.git
+cd ML-Based-Lead-Scoring-Platform
 ```
+
+### 2. Install Dependencies
+
+```bash
 pip install -r requirements.txt
 ```
-2. Install airflow locally
-3. Airflow Setup
-* Create airflow user for the UI login
-```
+
+### 3. Install Apache Airflow
+
+Follow the official Airflow installation guide for your operating system.
+
+### 4. Configure Airflow
+
+Create an Airflow admin user:
+
+```bash
 airflow users create \
-    --username rakshitha\
-    --firstname rakshitha\
-    --lastname bs\
+    --username admin \
+    --firstname Harshita \
+    --lastname Aneejwal \
     --role Admin \
-    --email rakshitha@gmail.com\
-    --password 123
+    --email harshita@example.com \
+    --password your_password
 ```
 
-* Run airflow webserver
-```
+Start the Airflow web server:
+
+```bash
 airflow webserver -p 8080
 ```
 
-* Start airflow scheduler
-```
+Start the Airflow scheduler:
+
+```bash
 airflow scheduler
 ```
-4. MLflow setup
-* Starting mlflow tracking server
-```
-mlflow serve --model-uri <path_to_sqilte_db> --port <port_number> --host <host_address>
 
+---
+
+### 5. Configure MLflow
+
+Start the MLflow tracking server:
+
+```bash
+mlflow server \
+--backend-store-uri sqlite:///mlflow.db \
+--host 0.0.0.0 \
+--port 5000
 ```
+
+---
+
+## Project Structure
+
+```text
+ML-Based-Lead-Scoring-Platform/
+│
+├── Lead_scoring_data_pipeline/
+├── notebooks/
+├── unit_test/
+├── dags/
+├── data/
+├── models/
+├── requirements.txt
+└── README.md
+```
+
+---
 
 ## Demo
 
-The screen shots for the pipelines can be found here [https://github.com/RakshithaBS/Lead_Scoring_Case_Study/blob/master/MLOPS.pdf](ScreenShots)
+Screenshots and workflow demonstrations can be found in:
+
+https://github.com/Harshita-Aneejwal/ML-Based-Lead-Scoring-Platform/blob/master/MLOPS.pdf
+
+---
+
+## Business Impact
+
+This platform helps organizations:
+
+* Improve lead qualification accuracy
+* Reduce customer acquisition costs
+* Prioritize high-conversion prospects
+* Improve sales team productivity
+* Automate machine learning workflows
+* Maintain reproducible ML experiments
+
+---
+
+## Future Improvements
+
+* Real-time lead scoring API deployment
+* Model monitoring and drift detection
+* Automated retraining pipelines
+* Cloud deployment on AWS
+* Dashboard for lead analytics and visualization
+* CI/CD integration for MLOps workflows
+
+---
+
+## License
+
+This project is intended for educational and learning purposes.
